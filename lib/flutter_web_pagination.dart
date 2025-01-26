@@ -10,8 +10,10 @@ class WebPagination extends StatefulWidget {
   final int totalPage;
   final ValueChanged<int> onPageChanged;
   final int displayItemCount;
+  final Color color;
   const WebPagination(
       {Key? key,
+        required this.color,
       required this.onPageChanged,
       required this.currentPage,
       required this.totalPage,
@@ -51,6 +53,7 @@ class _WebPaginationState extends State<WebPagination> {
   List<Widget> _buildPageItemList() {
     List<Widget> widgetList = [];
     widgetList.add(_PageControlButton(
+      color: widget.color,
       enable: currentPage > 1,
       title: '«',
       onTap: () {
@@ -71,6 +74,7 @@ class _WebPaginationState extends State<WebPagination> {
     for (; startPage <= currentPage; startPage++) {
       widgetList.add(_PageItem(
         page: startPage,
+        color: widget.color,
         isChecked: startPage == currentPage,
         onTap: (page) {
           _updatePage(page);
@@ -84,6 +88,7 @@ class _WebPaginationState extends State<WebPagination> {
     for (; startPage <= endPage; startPage++) {
       widgetList.add(_PageItem(
         page: startPage,
+        color: widget.color,
         isChecked: startPage == currentPage,
         onTap: (page) {
           _updatePage(page);
@@ -92,6 +97,7 @@ class _WebPaginationState extends State<WebPagination> {
     }
 
     widgetList.add(_PageControlButton(
+      color: widget.color,
       enable: currentPage < totalPage,
       title: '»',
       onTap: () {
@@ -116,9 +122,9 @@ class _WebPaginationState extends State<WebPagination> {
           inputFormatters: [
             MaxValueInputFormatter(maxValue: totalPage.toInt()),
           ],
-          style: const TextStyle(
+          style: TextStyle(
               textBaseline: TextBaseline.alphabetic,
-              color: Color(0xFF0175C2),
+              color: widget.color,
               fontSize: 15,
               height: 1.5,
               fontWeight: FontWeight.w600),
@@ -156,6 +162,7 @@ class _WebPaginationState extends State<WebPagination> {
         _PageControlButton(
             enable: true,
             title: "GO",
+            color: widget.color,
             onTap: () {
               setState(() {
                 try {
@@ -175,10 +182,12 @@ class _PageControlButton extends StatefulWidget {
   final bool enable;
   final String title;
   final VoidCallback onTap;
+  final Color color;
   const _PageControlButton(
       {Key? key,
       required this.enable,
       required this.title,
+      required this.color,
       required this.onTap})
       : super(key: key);
 
@@ -187,15 +196,14 @@ class _PageControlButton extends StatefulWidget {
 }
 
 class _PageControlButtonState extends State<_PageControlButton> {
-  Color normalTextColor = const Color(0xFF0175C2);
-  late Color textColor = widget.enable ? normalTextColor : Colors.grey;
+  late Color textColor = widget.enable ? widget.color : Colors.grey;
 
   @override
   void didUpdateWidget(_PageControlButton oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.enable != widget.enable) {
       setState(() {
-        textColor = widget.enable ? normalTextColor : Colors.grey;
+        textColor = widget.enable ? widget.color : Colors.grey;
       });
     }
   }
@@ -207,7 +215,7 @@ class _PageControlButtonState extends State<_PageControlButton> {
         onHover: (b) {
           if (!widget.enable) return;
           setState(() {
-            textColor = b ? normalTextColor.withAlpha(200) : normalTextColor;
+            textColor = b ? widget.color.withAlpha(200) : widget.color;
           });
         },
         child: _ItemContainer(
@@ -223,10 +231,12 @@ class _PageItem extends StatefulWidget {
   final int page;
   final bool isChecked;
   final ValueChanged<int> onTap;
+  final Color color;
   const _PageItem(
       {Key? key,
       required this.page,
       required this.isChecked,
+        required this.color,
       required this.onTap})
       : super(key: key);
 
@@ -236,7 +246,7 @@ class _PageItem extends StatefulWidget {
 
 class __PageItemState extends State<_PageItem> {
   Color normalBackgroundColor = const Color(0xFFF3F3F3);
-  Color normalHighlightColor = const Color(0xFF0175C2);
+  late Color normalHighlightColor = widget.color;
 
   late Color backgroundColor = normalBackgroundColor;
   late Color highlightColor = normalHighlightColor;
@@ -263,13 +273,14 @@ class __PageItemState extends State<_PageItem> {
           setState(() {
             backgroundColor =
                 b ? const Color(0xFFEAEAEA) : normalBackgroundColor;
-            highlightColor = b ? const Color(0xFF077BC6) : normalHighlightColor;
+            highlightColor = b ? widget.color : normalHighlightColor;
           });
         },
         onTap: () {
           widget.onTap(widget.page);
         },
         child: _ItemContainer(
+          backgroundColor: widget.isChecked ? highlightColor : backgroundColor,
           child: Text(
             widget.page.toString(),
             style: TextStyle(
@@ -277,7 +288,6 @@ class __PageItemState extends State<_PageItem> {
                 fontWeight: FontWeight.w600,
                 fontSize: 14),
           ),
-          backgroundColor: widget.isChecked ? highlightColor : backgroundColor,
         ));
   }
 }
@@ -293,11 +303,12 @@ class _ItemContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      child: child,
+      margin: EdgeInsets.symmetric(horizontal: 3),
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
       decoration: BoxDecoration(
           color: backgroundColor, borderRadius: BorderRadius.circular(4)),
+      child: child,
     );
   }
 }
