@@ -114,7 +114,7 @@ class _WebPaginationState extends State<WebPagination> {
           textAlign: TextAlign.center,
           maxLines: 1,
           inputFormatters: [
-            IntegerInputFormatter(maxDigits: totalPage.toInt()),
+            MaxValueInputFormatter(maxValue: totalPage.toInt()),
           ],
           style: const TextStyle(
               textBaseline: TextBaseline.alphabetic,
@@ -302,10 +302,10 @@ class _ItemContainer extends StatelessWidget {
   }
 }
 
-class IntegerInputFormatter extends TextInputFormatter {
-  final int maxDigits; // Maximum allowed digits for the integer
+class MaxValueInputFormatter extends TextInputFormatter {
+  final int maxValue; // Maximum allowed numeric value
 
-  IntegerInputFormatter({required this.maxDigits});
+  MaxValueInputFormatter({required this.maxValue});
 
   @override
   TextEditingValue formatEditUpdate(
@@ -317,14 +317,19 @@ class IntegerInputFormatter extends TextInputFormatter {
       return newValue;
     }
 
-    // Regular expression to match integers up to the specified maxDigits
-    final regExp = RegExp(r'^\d{0,' + maxDigits.toString() + r'}$');
+    // Check if the newText is a valid integer
+    final int? parsedValue = int.tryParse(newText);
+    if (parsedValue == null) {
+      // Reject invalid numbers (e.g., letters or special characters)
+      return oldValue;
+    }
 
-    if (regExp.hasMatch(newText)) {
+    // Allow the input only if it doesn't exceed maxValue
+    if (parsedValue <= maxValue) {
       return newValue;
     }
 
-    // Reject the new input if it doesn't match the pattern
+    // Reject the input if the value exceeds maxValue
     return oldValue;
   }
 }
