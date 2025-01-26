@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_custom_text_input_formatter: ^0.0.4
 
 dev_dependencies:
   flutter_test:

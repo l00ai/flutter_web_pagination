@@ -54,14 +54,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_custom_text_input_formatter:
-    dependency: "direct main"
-    description:
-      name: flutter_custom_text_input_formatter
-      sha256: "36cb7d56736449da5c0fcda83e2e18b4de37fa3d47fd3de4042e3d02824e4a80"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.4"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -75,14 +67,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  intl:
-    dependency: transitive
-    description:
-      name: intl
-      sha256: "910f85bce16fb5c6f614e117efa303e85a1731bb0081edf3604a2ae6e9a3cc91"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.17.0"
   leak_tracker:
     dependency: transitive
     description:

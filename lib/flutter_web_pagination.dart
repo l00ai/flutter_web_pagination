@@ -3,7 +3,7 @@ library flutter_web_pagination;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_custom_text_input_formatter/formatter.dart';
+import 'package:flutter/services.dart';
 
 class WebPagination extends StatefulWidget {
   final int currentPage;
@@ -113,8 +113,9 @@ class _WebPaginationState extends State<WebPagination> {
           controller: controller,
           textAlign: TextAlign.center,
           maxLines: 1,
-          inputFormatters: CustomTextInputFormatter.getIntFormatter(
-              maxValue: totalPage.toDouble()),
+          inputFormatters: [
+            IntegerInputFormatter(maxDigits: totalPage.toInt()),
+          ],
           style: const TextStyle(
               textBaseline: TextBaseline.alphabetic,
               color: Color(0xFF0175C2),
@@ -298,5 +299,32 @@ class _ItemContainer extends StatelessWidget {
       decoration: BoxDecoration(
           color: backgroundColor, borderRadius: BorderRadius.circular(4)),
     );
+  }
+}
+
+class IntegerInputFormatter extends TextInputFormatter {
+  final int maxDigits; // Maximum allowed digits for the integer
+
+  IntegerInputFormatter({required this.maxDigits});
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    String newText = newValue.text;
+
+    // Allow empty input
+    if (newText.isEmpty) {
+      return newValue;
+    }
+
+    // Regular expression to match integers up to the specified maxDigits
+    final regExp = RegExp(r'^\d{0,' + maxDigits.toString() + r'}$');
+
+    if (regExp.hasMatch(newText)) {
+      return newValue;
+    }
+
+    // Reject the new input if it doesn't match the pattern
+    return oldValue;
   }
 }
